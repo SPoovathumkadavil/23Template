@@ -9,12 +9,9 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.messaging.MessagingSystem;
-import frc.robot.subsystems.swerve.SwerveDrive;
-import frc.robot.subsystems.swerve.TeleopDriveCommand;
 
 public class RobotContainer {
 	private CommandXboxController xbox;
-	private SwerveDrive swerve;
 	private MessagingSystem messaging;
 	private Command autoCommand;
 	private SendableChooser<Command> autonChooser;
@@ -22,7 +19,6 @@ public class RobotContainer {
 	private final int DRIVER_PORT = 2;
 
 	public RobotContainer() {
-		swerve = SwerveDrive.getInstance();
 		messaging = MessagingSystem.getInstance();
 		setupAuto();
 		setupDriveController();
@@ -36,8 +32,6 @@ public class RobotContainer {
 
 	public void setupDriveController() {
 		xbox = new CommandXboxController(DRIVER_PORT);
-		TeleopDriveCommand swerveCommand = new TeleopDriveCommand(xbox);
-		swerve.setDefaultCommand(swerveCommand);
 
 		Trigger switchDriveModeButton = xbox.x();
 		Trigger resetGyroButton = xbox.a();
@@ -45,10 +39,6 @@ public class RobotContainer {
 		Trigger slowModeButton = xbox.leftBumper();
 		Trigger cancelationButton = xbox.start();
 
-		switchDriveModeButton.toggleOnTrue(swerveCommand.toggleRobotCentricCommand());
-		resetGyroButton.onTrue(swerveCommand.resetGyroCommand());
-		slowModeButton.whileTrue(swerveCommand.toggleSlowModeCommand());
-		alignToTargetButton.whileTrue(swerveCommand.toggleAlignToAngleCommand());
 		cancelationButton.onTrue(Commands.runOnce(() -> CommandScheduler.getInstance().cancelAll()));
 	}
 
